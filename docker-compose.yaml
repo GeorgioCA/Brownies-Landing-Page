@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  brownies:
+    build: .
+    container_name: brownies-landing
+    ports:
+      - "8080:80"
+    restart: unless-stopped
