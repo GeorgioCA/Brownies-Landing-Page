@@ -3,6 +3,6 @@ services:
   brownies:
     build: .
     container_name: brownies-landing
-    ports:
-      - "8080:80"
+    # ports:
+    #   - "8080:80"
     restart: unless-stopped
