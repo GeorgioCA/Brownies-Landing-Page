@@ -5,4 +5,6 @@ services:
     container_name: brownies-landing
     # ports:
     #   - "8080:80"
+    expose:
+      - "80"
     restart: unless-stopped
