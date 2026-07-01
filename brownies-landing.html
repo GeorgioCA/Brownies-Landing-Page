@@ -712,7 +712,8 @@
         send you a golden ticket when we're live in your city.
       </p>
       <form class="waitlist-form" id="waitlist-form">
-        <input type="email" placeholder="Enter your email" required>
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Enter your email" required>
         <button type="submit" class="btn btn-primary">Notify Me ✨</button>
       </form>
       <p style="margin-top:16px;font-size:0.85rem;color:var(--brown-300)">
@@ -728,12 +729,50 @@
   </footer>
 
   <script>
-    document.getElementById('waitlist-form').addEventListener('submit', function(e) {
+    document.getElementById('waitlist-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const btn = this.querySelector('button');
-      btn.textContent = '✅ You\'re on the list!';
-      btn.disabled = true; btn.style.opacity = '0.7';
-      this.querySelector('input').disabled = true;
+      const form = this;
+      const btn = form.querySelector('button');
+      const nameInput = form.querySelector('input[name="name"]');
+      const emailInput = form.querySelector('input[name="email"]');
+
+      const payload = {
+        name: nameInput.value.trim(),
+        email: emailInput.value.trim(),
+      };
+
+      btn.textContent = 'Submitting...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          btn.textContent = '✅ You\'re on the list!';
+          btn.style.opacity = '0.7';
+          nameInput.disabled = true;
+          emailInput.disabled = true;
+        } else {
+          btn.textContent = data.error || 'Something went wrong';
+          btn.style.background = '#c94d44';
+          btn.disabled = false;
+          setTimeout(() => {
+            btn.textContent = 'Notify Me ✨';
+            btn.style.background = '';
+          }, 3000);
+        }
+      } catch {
+        btn.textContent = '⚠️ Network error — try again';
+        btn.disabled = false;
+        setTimeout(() => {
+          btn.textContent = 'Notify Me ✨';
+        }, 3000);
+      }
     });
   </script>
 
